@@ -3,7 +3,6 @@ Three Body Problem Visualizer
 by Cathy Chen
 ========================================
 Physics simulation of the 3 body problem, uses Verlet Integration for simulation
-Inspired by Cixin Liu's "The Three-Body Problem" and Chaos Theory
 Simulation has 3 different eras: Stable, Figure8, and Chaotic
  - Stable: Simulate Sun, Earth, and Jupiter
  - Figure8: Special starting conditions for figure 8 pattern
@@ -46,7 +45,7 @@ G_CONST = 1.0 # Scaled gravitational constant: gravitational constant (scaled un
 SOFTENING = 1e-2 # Softening: no div by zero errors
 MAX_TRAIL_ALPHA = 1 # ALPHA: Per frame fade on trails
 COLORS = [(90, 200, 255), (255, 145, 80), (190, 140, 255)] #color palette of the planets
-
+stable = False # I use this variable to check if I'm on stable era to turn down the dt to slow simulation down a bit
 # ---------------------------- Physics Core ---------------------------
 
 @dataclass
@@ -104,13 +103,17 @@ def era_stable() -> Bodies:
     # this preset creates a simple "solar system like" configuration:
     # very heavy central object (sun) and 2 smaller planets (earth and jupiter)
 
-    m_sun, m_jup, m_earth = 1200.0, 3.0, 1.0  # #masses chosen for sun, jupiter, earth
+    #stable era, change stable to True
+    global stable
+    stable = True
+
+    m_sun, m_jup, m_earth = 350.0, 0.5, 0.5  # #masses chosen for sun, jupiter, earth (not accurate masses)
 
 
     #setting their initial positions
     pos = np.array([
         [0.0, 0.0],   # sun at origin
-        [5.5, 0.0],   # jupiter 5.5 away
+        [4.2, 0.0],   # jupiter 3.2 away
         [1.0, 0.0],   # earth 1 away
     ], dtype=np.float64)
 
@@ -130,8 +133,8 @@ def era_stable() -> Bodies:
 
     vel = np.array([
         [0.0, 0.0],          # sun has initially 0 velocity
-        [0.0,  0.6 * v_j],   # jupiter has a little reduced speed so it looks more stable
-        [0.0,  1.05 * v_e],  # earth gets a bit boosted speed so it looks more dynamic
+        [0.0, v_j],   # jupiter has a little reduced speed so it looks more stable
+        [0.0, v_e],  # earth gets a bit boosted speed so it looks more dynamic
     ], dtype=np.float64)
 
     # shifting to center of mass frame
@@ -146,6 +149,10 @@ def era_stable() -> Bodies:
 def era_figure8() -> Bodies:
     #figure 8 preset, all bodies follow the same figure 8 path
     #starting conditions done through ChatGPT
+
+    #not a stable era, change stable back to False
+    global stable
+    stable = False
 
     #all bodies have equal mass here
     mass = np.array([1.0, 1.0, 1.0], dtype=np.float64)
@@ -175,7 +182,10 @@ def era_figure8() -> Bodies:
 
 
 def era_chaotic(seed: int | None = None) -> Bodies:
-    #setting random positions
+
+    #not a stable era, change stable back to False
+    global stable
+    stable = False
 
     #setting seed if given
     if seed is not None:
@@ -309,7 +319,15 @@ class threebody:
 
             # update positions with verlet step function
             for _ in range(4): # 4 steps per frame
-                verlet_step(self.bodies, dt=0.01)
+
+                #if we're looking at stable, turn down dt to slow down sim
+                global stable
+                if stable:
+                    verlet_step(self.bodies, dt=0.001)
+                #otherwise, keep dt as 0.01
+                else:
+                    verlet_step(self.bodies, dt=0.01)
+                
 
             # fill in the background to erase canvas
             self.screen.fill(BG_COLOR)
