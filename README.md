@@ -2,6 +2,9 @@
 
 An interactive visualization of the Three-Body Problem, inspired by Cixin Liu's book of the same name and Chaos Theory, such as Lorenz Attractors.
 
+https://github.com/user-attachments/assets/f86621bc-6500-45c2-b9ef-f3e33806a306
+
+
 ---
 
 ## Overview
