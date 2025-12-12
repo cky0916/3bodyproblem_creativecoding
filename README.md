@@ -105,4 +105,18 @@ _Note that this is just a high level overview, more detailed documentation is in
      * Draws the background, trails, and planets
      * Shows to user, caps frame rate at 60fps
 
+---
+
+## Sources & Credits
+
+- **Era presets (Stable / Figure-8 / Chaotic):** Initial-condition preset ideas were generated with ChatGPT, then tuned/adjusted by me.
+
+- **Physics core (gravity + Verlet step):** The core Newtonian gravity / Verlet-style stepping approach was adapted from an existing GitHub N-body implementation, then refactored with ChatGPT, and further edited by me.
+  - Reference repo (Verlet-based gravitational N-body): https://github.com/SapiensAnatis/nbody-simulation
+
+- **Pygame simulation + rendering:** Implemented by me (window, drawing, controls, trails, etc.), with help from a CS-major friend who guided me through parts of the Pygame approach.
+
+- **Libraries:** `pygame`, `numpy`
+
+
 
